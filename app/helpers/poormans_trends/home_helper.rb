@@ -12,9 +12,20 @@ module PoormansTrends
       }.sort {|a,b| b.count <=> a.count}
     end
 
+    def group_by_date_sql(colname)
+      case ActiveRecord::Base.connection
+      when ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
+        "#{colname}::date"
+      when ActiveRecord::ConnectionAdapters::MysqlAdapter
+        "DATE(#{colname})"
+      else
+        raise Exception.new("Unsupported adapter: #{ActiveRecord::Base.connection.class.name}")
+      end
+    end
+
     def data_for(klass, colname, start_at, end_at = 1.day.ago)
       timezone_offset = nil
-      db = klass.where("#{colname} >= ?", start_at).group("#{colname}::date").count.inject({}) do |sum,(k,v)|
+      db = klass.where("#{colname} >= ?", start_at).group(group_by_date_sql(colname)).count.inject({}) do |sum,(k,v)|
         timezone_offset ||= k.to_time.beginning_of_day - Time.zone.parse(k.to_s).beginning_of_day
         sum.merge(k.to_time.to_i * 1000 => v)
       end
