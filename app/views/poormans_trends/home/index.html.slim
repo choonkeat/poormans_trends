@@ -1,0 +1,19 @@
+.page-header
+  h1 Poorman&rsquo;s Trends
+  hr
+  .clearfix
+    .pull-left
+      ' Over the past
+      = link_to "14 days", params.merge(days_ago: "14")
+      '  &middot;
+      = link_to "30 days", params.merge(days_ago: "30")
+      '  &middot;
+      = link_to "60 days", params.merge(days_ago: "60")
+
+    .pull-right.text-right
+      = link_to_unless params[:column] == "created_at", "created_at".humanize, params.merge(column: "created_at")
+      '  &middot;
+      = link_to_unless params[:column] == "updated_at", "updated_at".humanize, params.merge(column: "updated_at")
+
+= render 'dashboard', column: [params[:column], 'created_at'].find(&:present?), duration: [[params[:days_ago], '14'].find(&:present?).to_i, 120].min.days, table_names: tables_with_col([params[:column], 'created_at'].find(&:present?))
+

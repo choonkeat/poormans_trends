@@ -1,0 +1,19 @@
+- full_time = duration.ago.beginning_of_day
+- half_time = (duration.seconds/2).seconds.ago.beginning_of_day
+.row
+  - tables_to_classes(table_names).each do |klass|
+    - next if klass.count == 0
+    .col-sm-6 style="margin-bottom:3em;"
+      - recent_count = klass.where("#{column} >= ?", half_time).count
+      - older_count  = klass.where("#{column} >= ? AND #{column} < ?", full_time, half_time).count
+      h4 style="text-align:center"= pluralize(klass.count, "Total #{klass.table_name.singularize.titleize}")
+      div.trend class=(recent_count > older_count ? 'up-trend' : 'down-trend')
+        .pct.pull-right
+          h1= "#{'%0.0f' % ((recent_count - older_count) / older_count.to_f * 100)}%"
+          .text-center  from #{older_count}
+        .pct.pull-right
+          h1.trendarrow
+        h1
+          ' #{number_to_human(recent_count, units: :human_unit) rescue nil}
+        | #{column.sub(/_at$/, '').downcase} in the last #{duration.inspect}
+      div.chart style="opacity: 0.5;" data-chart=[{name: "Count", color: '#a3a3a8', data: data_for(klass, column, full_time)}, {name: "Count", color: '#6499cf', data: data_for(klass, column, half_time)}].to_json

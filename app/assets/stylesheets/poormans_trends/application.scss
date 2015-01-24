@@ -1,0 +1,29 @@
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+@import 'font-awesome-sprockets';
+@import 'font-awesome';
+
+.trendarrow {
+  @extend .fa;
+  font-size: $font-size-h1;
+}
+
+.trend {
+  h1 { margin-top: 0; }
+}
+
+.up-trend .pct {
+  color: $brand-success;
+  .trendarrow {
+    @extend .fa-chevron-up;
+  }
+}
+
+.down-trend .pct {
+  color: $brand-danger;
+  .trendarrow {
+    @extend .fa-chevron-down;
+  }
+}
+
