@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    poormans_trends (0.0.1)
+    poormans_trends (0.0.2)
       bootstrap-sass
       font-awesome-sass
       highcharts-rails
